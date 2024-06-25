@@ -1,12 +1,91 @@
+body {
+    font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
+    background-image: url("../img/bg.png");
+    text-align: center;
+    margin: 0;
+    padding: 0;
+    border: 0;
+}
 
-/* 
+section {
+    width: 100%;
+    height: 100vh;
+}
 
-    You can write your own styles here...
-    
-    
-    ...Or you can use the import command to include 
-    other sylesheets into your bunde as well, e.j:
-    
-    import 'relative/path/to/stylesheet.scss';
+.cont {
+    display: flex;
+}
 
-*/
+.audio-player {
+    width: 500px;
+    margin: 0px 10%;
+    text-align: center;
+    background-color: #45474b9e;
+    padding: 15px;
+    border-radius: 20px;
+
+}
+
+.songs-list {
+    list-style: none;
+    padding: 0;
+
+}
+
+.songs-list li {
+    padding: 1px;
+    cursor: pointer;
+    border-bottom: 1px solid #379777;
+    display: flex;
+    border-radius: 8px;
+
+}
+
+.songs-list li.active {
+    background-color: #379777;
+}
+
+.songs-list li:hover {
+    background-color: #F4CE14;
+}
+
+.song-details {
+    display: flex;
+    width: 100%;
+}
+
+.song-index {
+    font-weight: bold;
+    color: #393b3fc6;
+}
+
+.song-name {
+    margin-left: 5px;
+}
+
+.song-duration {
+    margin-left: auto;
+    font-style: italic;
+    color: #00000080;
+    font-size: 13px;
+}
+
+
+.controls {
+    display: flex;
+    justify-content: space-evenly;
+}
+
+.controls button {
+    padding: 5px 50px;
+    cursor: pointer;
+    border: none;
+    background-color: #379777;
+    color: white;
+    border-radius: 5px;
+}
+
+.controls button:hover {
+    background-color: #F4CE14;
+    color: white;
+}
