@@ -1,53 +1,55 @@
 import React, { useState, useRef, useEffect } from "react";
 
+//Declaramos la función
 const AudioPlayer = () => {
-
-    const url = "https://playground.4geeks.com";
-    const [songs] = useState([
-        { id: 1, name: "Mario Castle", url: "/sound/files/mario/songs/castle.mp3" },
-        { id: 2, name: "Mario Star", url: "/sound/files/mario/songs/hurry-starman.mp3" },
-        { id: 3, name: "Mario Overworld", url: "/sound/files/mario/songs/overworld.mp3" },
-        { id: 4, name: "Mario Stage 1", url: "/sound/files/mario/songs/stage1.mp3" },
-        { id: 5, name: "Mario Stage 2", url: "/sound/files/mario/songs/stage2.mp3" },
-        { id: 6, name: "Mario Star", url: "/sound/files/mario/songs/starman.mp3" },
-        { id: 7, name: "Mario Underworld", url: "/sound/files/mario/songs/underworld.mp3" },
-        { id: 8, name: "Mario Underwater", url: "/sound/files/mario/songs/underwater.mp3" },
-        { id: 9, name: "Zelda Castle", url: "/sound/files/videogame/songs/zelda_castle.mp3" },
-        { id: 10, name: "Zelda Outworld", url: "/sound/files/videogame/songs/zelda_outworld.mp3" },
-        { id: 11, name: "Zelda Titles", url: "/sound/files/videogame/songs/zelda_title.mp3" },
-        { id: 12, name: "Sonic Brain Zone", url: "/sound/files/videogame/songs/sonic_brain-zone.mp3" },
-        { id: 13, name: "Zelda Link To Past", url: "/sound/files/videogame/songs/zelda_link-to-past.mp3" },
-        { id: 14, name: "Flintstones", url: "/sound/files/cartoons/songs/flintstones.mp3" },
-        { id: 15, name: "power-rangers", url: "/sound/files/cartoons/songs/power-rangers.mp3" },
-        { id: 16, name: "simpsons", url: "/sound/files/cartoons/songs/simpsons.mp3" },
-        { id: 17, name: "south-park", url: "/sound/files/cartoons/songs/south-park.mp3" },
-        { id: 18, name: "thundercats", url: "/sound/files/cartoons/songs/thundercats.mp3" },
-        { id: 19, name: "x-men", url: "/sound/files/cartoons/songs/x-men.mp3" }
-    ]);
-
+    const urlInitial = "https://playground.4geeks.com";
+    const [songs, setSongs] = useState([]);
     const [currentSongIndex, setCurrentSongIndex] = useState(0);
     const [isPlaying, setIsPlaying] = useState(false);
-    const [durations, setDurations] = useState(Array(songs.length).fill(0));
+    const [durations, setDurations] = useState([]);
     const audioRef = useRef(null);
 
+    // Fetch a las canciones
+    useEffect(() => {
+        fetchSongs();
+    }, []);
 
+    const fetchSongs = async () => {
+        try {
+            const response = await fetch("https://playground.4geeks.com/sound/songs");
+            if (!response.ok) {
+                throw new Error("Error " + response.statusText);
+            }
+            const data = await response.json();
+            setSongs(data.songs);
+        } catch (error) {
+            console.error("Fetch error: ", error);
+        }
+    };
+
+    // Duración de la canción
     const loadDuration = (index) => {
-        const audio = new Audio(`${url}${songs[index].url}`);
-        audio.addEventListener("loadedmetadata", () => {
-            setDurations((prevDurations) => {
-                const newDurations = [...prevDurations];
-                newDurations[index] = audio.duration;
-                return newDurations;
+        if (songs[index]?.url) {
+            const audio = new Audio(`${urlInitial}${songs[index].url}`);
+            audio.addEventListener("loadedmetadata", () => {
+                setDurations((prevDurations) => {
+                    const newDurations = [...prevDurations];
+                    newDurations[index] = audio.duration;
+                    return newDurations;
+                });
             });
-        });
+        }
     };
 
     useEffect(() => {
-        songs.forEach((song, index) => {
-            loadDuration(index);
-        });
-    }, []);
+        if (songs.length > 0) {
+            songs.forEach((song, index) => {
+                loadDuration(index);
+            });
+        }
+    }, [songs]);
 
+    // cambio de play y pause
     const playPause = () => {
         if (isPlaying) {
             audioRef.current.pause();
@@ -57,19 +59,19 @@ const AudioPlayer = () => {
         setIsPlaying(!isPlaying);
     };
 
+    // siguiente cancion
     const nextSong = () => {
         const nextIndex = (currentSongIndex + 1) % songs.length;
         setCurrentSongIndex(nextIndex);
         setIsPlaying(true);
     };
 
+    // cancion anterior o previa
     const prevSong = () => {
         const prevIndex = (currentSongIndex - 1 + songs.length) % songs.length;
         setCurrentSongIndex(prevIndex);
         setIsPlaying(true);
     };
-
-
 
     return (
         <div className="cont">
@@ -96,15 +98,15 @@ const AudioPlayer = () => {
                     <button onClick={playPause}>{isPlaying ? "Pause" : "Play"}</button>
                     <button onClick={nextSong}>&#9654;</button>
                 </div>
-                <audio
-                    ref={audioRef}
-                    src={`${url}${songs[currentSongIndex].url}`}
-                    onEnded={nextSong}
-                ></audio>
-
+                {songs.length > 0 && (
+                    <audio
+                        ref={audioRef}
+                        src={`${urlInitial}${songs[currentSongIndex]?.url}`}
+                        onEnded={nextSong}
+                    ></audio>
+                )}
             </div>
         </div>
-
     );
 };
 
